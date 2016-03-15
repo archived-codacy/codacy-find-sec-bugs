@@ -1,0 +1,504 @@
+{
+  "name": "FindBugsSecurity",
+  "patterns": [
+
+    {
+      "patternId": "PREDICTABLE_RANDOM",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "PREDICTABLE_RANDOM_SCALA",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "SERVLET_PARAMETER",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "SERVLET_CONTENT_TYPE",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "SERVLET_SERVER_NAME",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "SERVLET_SESSION_ID",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "SERVLET_QUERY_STRING",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "SERVLET_HEADER",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "SERVLET_HEADER_REFERER",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "SERVLET_HEADER_USER_AGENT",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "COOKIE_USAGE",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "INSECURE_COOKIE",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "HTTPONLY_COOKIE",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "PATH_TRAVERSAL_IN",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "PATH_TRAVERSAL_OUT",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "COMMAND_INJECTION",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "SCALA_COMMAND_INJECTION",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "WEAK_FILENAMEUTILS",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "WEAK_TRUST_MANAGER",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "WEAK_HOSTNAME_VERIFIER",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "JAXWS_ENDPOINT",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "JAXRS_ENDPOINT",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "TAPESTRY_ENDPOINT",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "WICKET_ENDPOINT",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "WEAK_MESSAGE_DIGEST_MD5",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "WEAK_MESSAGE_DIGEST_SHA1",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "CUSTOM_MESSAGE_DIGEST",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "FILE_UPLOAD_FILENAME",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "REDOS",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "XXE_SAXPARSER",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "XXE_XMLREADER",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "XXE_DOCUMENT",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "XPATH_INJECTION",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "STRUTS1_ENDPOINT",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "STRUTS2_ENDPOINT",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "SPRING_ENDPOINT",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "CUSTOM_INJECTION",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "SQL_INJECTION_HIBERNATE",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "SQL_INJECTION_JDO",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "SQL_INJECTION_JPA",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "SQL_INJECTION_SPRING_JDBC",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "SQL_INJECTION_JDBC",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "LDAP_INJECTION",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "BAD_HEXA_CONVERSION",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "HAZELCAST_SYMMETRIC_ENCRYPTION",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "NULL_CIPHER",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "UNENCRYPTED_SOCKET",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "DES_USAGE",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "RSA_NO_PADDING",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "HARD_CODE_PASSWORD",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "HARD_CODE_KEY",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "STRUTS_FORM_VALIDATION",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "XSS_REQUEST_WRAPPER",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "RSA_KEY_SIZE",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "BLOWFISH_KEY_SIZE",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "UNVALIDATED_REDIRECT",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "PLAY_UNVALIDATED_REDIRECT",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "XSS_JSP_PRINT",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "JSP_INCLUDE",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "JSP_SPRING_EVAL",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "JSP_JSTL_OUT",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "XSS_SERVLET",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "XML_DECODER",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "STATIC_IV",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "ECB_MODE",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "PADDING_ORACLE",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "CIPHER_INTEGRITY",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "ESAPI_ENCRYPTOR",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "SCRIPT_ENGINE_INJECTION",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "SPEL_INJECTION",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "EL_INJECTION",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "SEAM_LOG_INJECTION",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "HTTP_RESPONSE_SPLITTING",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "CRLF_INJECTION_LOGS",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "EXTERNAL_CONFIG_CONTROL",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "ANDROID_EXTERNAL_FILE_ACCESS",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "ANDROID_BROADCAST",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "ANDROID_WORLD_WRITABLE",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "ANDROID_GEOLOCATION",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "ANDROID_WEB_VIEW_JAVASCRIPT",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "ANDROID_WEB_VIEW_JAVASCRIPT_INTERFACE",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "OBJECT_DESERIALIZATION",
+      "level": "Error",
+      "category": "Security"
+    },
+
+    {
+      "patternId": "TRUST_BOUNDARY_VIOLATION",
+      "level": "Error",
+      "category": "Security"
+    }
+
+  ]
+}

@@ -1,0 +1,583 @@
+[
+  {
+    "patternId": "PREDICTABLE_RANDOM",
+    "title": "Predictable pseudorandom number generator",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "PREDICTABLE_RANDOM_SCALA",
+    "title": "Predictable pseudorandom number generator (Scala)",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "SERVLET_PARAMETER",
+    "title": "Untrusted servlet parameter",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "SERVLET_CONTENT_TYPE",
+    "title": "Untrusted Content-Type header",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "SERVLET_SERVER_NAME",
+    "title": "Untrusted Hostname header",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "SERVLET_SESSION_ID",
+    "title": "Untrusted session cookie value",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "SERVLET_QUERY_STRING",
+    "title": "Untrusted query string",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "SERVLET_HEADER",
+    "title": "HTTP headers untrusted",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "SERVLET_HEADER_REFERER",
+    "title": "Untrusted Referer header",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "SERVLET_HEADER_USER_AGENT",
+    "title": "Untrusted User-Agent header",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "COOKIE_USAGE",
+    "title": "Potentially sensitive data in a cookie",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "PATH_TRAVERSAL_IN",
+    "title": "Potential Path Traversal (file read)",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "PATH_TRAVERSAL_OUT",
+    "title": "Potential Path Traversal (file write)",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "COMMAND_INJECTION",
+    "title": "Potential Command Injection",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "SCALA_COMMAND_INJECTION",
+    "title": "Potential Command Injection (Scala)",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "WEAK_FILENAMEUTILS",
+    "title": "FilenameUtils not filtering null bytes",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "WEAK_TRUST_MANAGER",
+    "title": "TrustManager that accept any certificates",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "WEAK_HOSTNAME_VERIFIER",
+    "title": "HostnameVerifier that accept any signed certificates",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "JAXWS_ENDPOINT",
+    "title": "Found JAX-WS SOAP endpoint",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "JAXRS_ENDPOINT",
+    "title": "Found JAX-RS REST endpoint",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "TAPESTRY_ENDPOINT",
+    "title": "Found Tapestry page",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "WICKET_ENDPOINT",
+    "title": "Found Wicket WebPage",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "WEAK_MESSAGE_DIGEST_MD5",
+    "title": "MD2, MD4 and MD5 are weak hash functions",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "WEAK_MESSAGE_DIGEST_SHA1",
+    "title": "SHA-1 is a weak hash function",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "CUSTOM_MESSAGE_DIGEST",
+    "title": "Message digest is custom",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "FILE_UPLOAD_FILENAME",
+    "title": "Tainted filename read",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "REDOS",
+    "title": "Regex DOS (ReDOS)",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "XXE_SAXPARSER",
+    "title": "XML parsing vulnerable to XXE (SAXParser)",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "XXE_XMLREADER",
+    "title": "XML parsing vulnerable to XXE (XMLReader)",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "XXE_DOCUMENT",
+    "title": "XML parsing vulnerable to XXE (DocumentBuilder)",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "XPATH_INJECTION",
+    "title": "Potential XPath Injection",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "STRUTS1_ENDPOINT",
+    "title": "Found Struts 1 endpoint",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "STRUTS2_ENDPOINT",
+    "title": "Found Struts 2 endpoint",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "SPRING_ENDPOINT",
+    "title": "Found Spring endpoint",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "CUSTOM_INJECTION",
+    "title": "Potential injection (custom)",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "SQL_INJECTION_HIBERNATE",
+    "title": "Potential SQL/HQL Injection (Hibernate)",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "SQL_INJECTION_JDO",
+    "title": "Potential SQL/JDOQL Injection (JDO)",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "SQL_INJECTION_JPA",
+    "title": "Potential SQL/JPQL Injection (JPA)",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "SQL_INJECTION_SPRING_JDBC",
+    "title": "Potential JDBC Injection (Spring JDBC)",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "SQL_INJECTION_JDBC",
+    "title": "Potential JDBC Injection",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "LDAP_INJECTION",
+    "title": "Potential LDAP Injection",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "SCRIPT_ENGINE_INJECTION",
+    "title": "Potential code injection when using Script Engine",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "SPEL_INJECTION",
+    "title": "Potential code injection when using Spring Expression",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "EL_INJECTION",
+    "title": "Potential code injection when using Expression Language (EL)",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "SEAM_LOG_INJECTION",
+    "title": "Potential code injection in Seam logging call",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "HTTP_RESPONSE_SPLITTING",
+    "title": "Potential HTTP Response Splitting",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "CRLF_INJECTION_LOGS",
+    "title": "Potential CRLF Injection for logs",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "EXTERNAL_CONFIG_CONTROL",
+    "title": "Potential external control of configuration",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "BAD_HEXA_CONVERSION",
+    "title": "Bad hexadecimal concatenation",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "HAZELCAST_SYMMETRIC_ENCRYPTION",
+    "title": "Hazelcast symmetric encryption",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "NULL_CIPHER",
+    "title": "NullCipher is insecure",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "UNENCRYPTED_SOCKET",
+    "title": "Unencrypted Socket",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "DES_USAGE",
+    "title": "DES/DESede is insecure",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "RSA_NO_PADDING",
+    "title": "RSA with no padding is insecure",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "HARD_CODE_PASSWORD",
+    "title": "Hard Coded Password",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "HARD_CODE_KEY",
+    "title": "Hard Coded Key",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "STRUTS_FORM_VALIDATION",
+    "title": "Struts Form without input validation",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "XSS_REQUEST_WRAPPER",
+    "title": "XSSRequestWrapper is a weak XSS protection",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "BLOWFISH_KEY_SIZE",
+    "title": "Blowfish usage with short key",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "RSA_KEY_SIZE",
+    "title": "RSA usage with short key",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "UNVALIDATED_REDIRECT",
+    "title": "Unvalidated Redirect",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "PLAY_UNVALIDATED_REDIRECT",
+    "title": "Unvalidated Redirect (Play Framework)",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "JSP_INCLUDE",
+    "title": "Dynamic JSP inclusion",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "JSP_SPRING_EVAL",
+    "title": "Dynamic variable in Spring expression",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "JSP_JSTL_OUT",
+    "title": "Escaping of special XML characters is disabled",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "XSS_JSP_PRINT",
+    "title": "Potential XSS in JSP",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "XSS_SERVLET",
+    "title": "Potential XSS in Servlet",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "XML_DECODER",
+    "title": "XMLDecoder usage",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "STATIC_IV",
+    "title": "Static IV",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "ECB_MODE",
+    "title": "ECB mode is insecure",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "PADDING_ORACLE",
+    "title": "Cipher is susceptible to Padding Oracle",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "CIPHER_INTEGRITY",
+    "title": "Cipher with no integrity",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "ESAPI_ENCRYPTOR",
+    "title": "Use of ESAPI Encryptor",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "ANDROID_EXTERNAL_FILE_ACCESS",
+    "title": "External file access (Android)",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "ANDROID_BROADCAST",
+    "title": "Broadcast (Android)",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "ANDROID_WORLD_WRITABLE",
+    "title": "World writable file (Android)",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "ANDROID_GEOLOCATION",
+    "title": "WebView with geolocation activated (Android)",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "ANDROID_WEB_VIEW_JAVASCRIPT",
+    "title": "WebView with JavaScript enabled (Android)",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "ANDROID_WEB_VIEW_JAVASCRIPT_INTERFACE",
+    "title": "WebView with JavaScript interface (Android)",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "INSECURE_COOKIE",
+    "title": "Cookie without the secure flag",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "HTTPONLY_COOKIE",
+    "title": "Cookie without the HttpOnly flag",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "OBJECT_DESERIALIZATION",
+    "title": "Object deserialization used",
+    "description": "",
+    "timeToFix": 30
+  },
+
+  {
+    "patternId": "TRUST_BOUNDARY_VIOLATION",
+    "title": "Trust Boundary Violation",
+    "description": "",
+    "timeToFix": 30
+  }
+
+]
