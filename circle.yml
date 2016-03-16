@@ -14,7 +14,7 @@ dependencies:
 
 test:
   pre:
-    - git clone https://github.com/codacy/codacy-plugins-test.git
+    - git clone -b compilation https://github.com/codacy/codacy-plugins-test.git
   override:
     - (cd codacy-plugins-test; sbt "run-main codacy.plugins.DockerTest json $CIRCLE_PROJECT_REPONAME:latest")
     - (cd codacy-plugins-test; sbt "run-main codacy.plugins.DockerTest pattern $CIRCLE_PROJECT_REPONAME:latest")
