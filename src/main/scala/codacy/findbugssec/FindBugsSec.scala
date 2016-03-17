@@ -1,7 +1,7 @@
 package codacy.findbugssec
 
-import java.nio.file.Path
 import java.io.File
+import java.nio.file.Path
 
 import codacy.dockerApi._
 import codacy.dockerApi.utils.{CommandRunner, FileHelper, ToolHelper}
@@ -42,7 +42,7 @@ object FindBugsSec extends Tool {
     }
   }
 
-  private def toolCommand(path: Path, conf: Option[List[PatternDef]], builder: Builder) = {
+  private[this] def toolCommand(path: Path, conf: Option[List[PatternDef]], builder: Builder) = {
     val defaultCmd = List("java", "-jar", "findbugssec.jar",
       "-xml:withMessages", "-output", "/tmp/output.xml")
     val configuredPatterns = conf match {
@@ -57,10 +57,10 @@ object FindBugsSec extends Tool {
     (defaultCmd ++ configuredPatterns ++ targets, componentProjects)
   }
 
-  private def processTool(path: Path,
-                          conf: Option[List[PatternDef]],
-                          files: Option[Set[Path]],
-                          builder: Builder): Try[List[Result]] = {
+  private[this] def processTool(path: Path,
+                                conf: Option[List[PatternDef]],
+                                files: Option[Set[Path]],
+                                builder: Builder): Try[List[Result]] = {
 
     val (command, componentProjects) = toolCommand(path, conf, builder)
     CommandRunner.exec(command) match {
@@ -76,7 +76,7 @@ object FindBugsSec extends Tool {
     }
   }
 
-  private def elementPathAndLine(elem: Node): Option[Seq[Occurence]] = {
+  private[this] def elementPathAndLine(elem: Node): Option[Seq[Occurence]] = {
     for {
       start      <- elem.attribute("start")
       sourcepath <- elem.attribute("sourcepath")
@@ -87,18 +87,18 @@ object FindBugsSec extends Tool {
     }
   }
 
-  private def sourceFileName(directory: SourceDirectory, bug: BugInstance) = {
+  private[this] def sourceFileName(directory: SourceDirectory, bug: BugInstance) = {
     Seq(directory.absoluteStringPath, bug.occurence.path).mkString(File.separator)
   }
 
-  private def isFileEnabled(path: String, files: Option[Set[Path]]): Boolean = {
+  private[this] def isFileEnabled(path: String, files: Option[Set[Path]]): Boolean = {
     files.fold(true) { case files => files.exists(_.toAbsolutePath.toFile.getAbsolutePath == path) }
   }
 
-  private def resultsFromBugInstances(bugs: Seq[BugInstance],
-                                      directories: Array[File],
-                                      files: Option[Set[Path]],
-                                      builder: Builder): Seq[Result] = {
+  private[this] def resultsFromBugInstances(bugs: Seq[BugInstance],
+                                            directories: Array[File],
+                                            files: Option[Set[Path]],
+                                            builder: Builder): Seq[Result] = {
     val sourceDirectories = directories.map { file =>
       val components = Seq(file.getAbsolutePath) ++ builder.pathComponents
       new SourceDirectory(new File(components.mkString(File.separator)))
@@ -124,7 +124,7 @@ object FindBugsSec extends Tool {
     }
   }
 
-  private def parseOutputFile(): Seq[BugInstance] = {
+  private[this] def parseOutputFile(): Seq[BugInstance] = {
     val xmlOutput = XML.loadFile("/tmp/output.xml")
     val bugInstances = xmlOutput \ "BugInstance"
     bugInstances.flatMap { case bugInstance =>
@@ -148,7 +148,7 @@ object FindBugsSec extends Tool {
     }
   }
 
-  private def patternIncludeXML(conf: List[PatternDef]): String = {
+  private[this] def patternIncludeXML(conf: List[PatternDef]): String = {
     val xmlLiteral = <FindBugsFilter>{
       conf.map( pattern =>
         <Match>
@@ -161,7 +161,7 @@ object FindBugsSec extends Tool {
     tmp.toAbsolutePath.toString
   }
 
-  private def collectTargets(path: Path, builder: Builder): Array[File] = {
+  private[this] def collectTargets(path: Path, builder: Builder): Array[File] = {
     // Get the directories that can be projects (including subprojects and the current directory).
     val directories = path.toFile.listFiles.filter(_.isDirectory) ++ Seq(path.toFile)
     directories.filter {
