@@ -30,8 +30,7 @@ private class SourceDirectory(val absolutePath: File) {
 object FindBugsSec extends Tool {
 
   override def apply(path: Path, conf: Option[List[PatternDef]], files: Option[Set[Path]])(implicit spec: Spec): Try[List[Result]] = {
-    val someBuilder = BuilderFactory(path)
-    someBuilder match {
+    BuilderFactory(path) match {
       case Some(builder) =>
         val completeConf = ToolHelper.getPatternsToLint(conf)
         builder.build(path) match {
@@ -44,7 +43,7 @@ object FindBugsSec extends Tool {
 
   private[this] def toolCommand(path: Path, conf: Option[List[PatternDef]], builder: Builder) = {
     val defaultCmd = List("java", "-jar", "findbugssec.jar",
-      "-xml:withMessages", "-output", "/tmp/output.xml")
+                          "-xml:withMessages", "-output", "/tmp/output.xml")
     val configuredPatterns = conf match {
       case Some(conf) if conf.nonEmpty =>
         val configurationFile = patternIncludeXML(conf)
@@ -52,9 +51,9 @@ object FindBugsSec extends Tool {
       case _ =>
         List()
     }
-    val componentProjects = collectTargets(path, builder)
-    val targets = componentProjects.flatMap(builder.targetOfDirectory).toSeq
-    (defaultCmd ++ configuredPatterns ++ targets, componentProjects)
+    val sourceDirs = collectTargets(path, builder)
+    val targetDirs = sourceDirs.flatMap(builder.targetOfDirectory).toSeq
+    (defaultCmd ++ configuredPatterns ++ targetDirs, sourceDirs)
   }
 
   private[this] def processTool(path: Path,
@@ -62,16 +61,16 @@ object FindBugsSec extends Tool {
                                 files: Option[Set[Path]],
                                 builder: Builder): Try[List[Result]] = {
 
-    val (command, componentProjects) = toolCommand(path, conf, builder)
+    val (command, sourceDirs) = toolCommand(path, conf, builder)
     CommandRunner.exec(command) match {
-      case Left(failure) => Failure(failure)
+      case Left(throwable) => Failure(throwable)
       case Right(output) if output.exitCode != 0 =>
         Failure(new Exception("Can't execute tool."))
 
       case Right(_) =>
         Try {
           val bugs = parseOutputFile()
-          resultsFromBugInstances(bugs, componentProjects, files, builder).toList
+          resultsFromBugInstances(bugs, sourceDirs, files, builder).toList
         }
     }
   }
@@ -96,25 +95,26 @@ object FindBugsSec extends Tool {
   }
 
   private[this] def resultsFromBugInstances(bugs: Seq[BugInstance],
-                                            directories: Array[File],
+                                            sourceDirs: Array[File],
                                             files: Option[Set[Path]],
                                             builder: Builder): Seq[Result] = {
-    val sourceDirectories = directories.map { file =>
-      val components = Seq(file.getAbsolutePath) ++ builder.pathComponents
-      new SourceDirectory(new File(components.mkString(File.separator)))
+    val sourceDirectories = sourceDirs.map { case dir =>
+      val components = Seq(dir.getAbsolutePath) ++ builder.pathComponents
+      val dirPath = components.mkString(File.separator)
+      new SourceDirectory(new File(dirPath))
     }
 
     bugs.flatMap { case bug =>
-      val foundOccurences = sourceDirectories.filter(_.subdirectoryExists(bug.occurence.components))
+      val foundOriginDirectories = sourceDirectories.filter(_.subdirectoryExists(bug.occurence.components))
 
-      val results: Seq[Result] = foundOccurences.collect {
-        case directory if foundOccurences.size == 1 && isFileEnabled(sourceFileName(directory, bug), files) =>
+      val results: Seq[Result] = foundOriginDirectories.collect {
+        case directory if foundOriginDirectories.size == 1 && isFileEnabled(sourceFileName(directory, bug), files) =>
           val filename = sourceFileName(directory, bug)
           Issue(SourcePath(filename),
                 ResultMessage(bug.message),
                 PatternId(bug.name),
                 ResultLine(bug.occurence.lineno))
-        case directory if foundOccurences.size > 1 && isFileEnabled(sourceFileName(directory, bug), files) =>
+        case directory if foundOriginDirectories.size > 1 && isFileEnabled(sourceFileName(directory, bug), files) =>
           val filename = sourceFileName(directory, bug)
           FileError(SourcePath(filename),
                     Option(ErrorMessage("File duplicated in multiple directories.")))
@@ -167,9 +167,7 @@ object FindBugsSec extends Tool {
     directories.filter {
       case directory =>
         builder.targetOfDirectory(directory).fold(false) {
-          case target =>
-            val targetFile = new File(target)
-            targetFile.exists
+          case target => new File(target).exists
         }
 
     }
