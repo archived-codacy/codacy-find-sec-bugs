@@ -11,7 +11,7 @@ import scala.xml.{XML, Node}
 
 
 private class Occurence(val lineno: Integer, val path: String) {
-  lazy val packageName = path.split(File.separatorChar).head
+  lazy val packageName = path.split(File.separatorChar).headOption.getOrElse("")
   lazy val components = path.split(File.separatorChar)
 }
 
@@ -19,7 +19,7 @@ private class BugInstance(val name: String, val message: String, val occurence: 
 
 private class SourceDirectory(val absolutePath: File) {
 
-  lazy val absoluteStringPath = absolutePath.getAbsolutePath()
+  lazy val absoluteStringPath = absolutePath.getAbsolutePath
 
   def subdirectoryExists(components: Seq[String]): Boolean = {
     val pathComponents = Seq(absoluteStringPath) ++ components
@@ -36,7 +36,7 @@ object FindBugsSec extends Tool {
         val completeConf = ToolHelper.getPatternsToLint(conf)
         builder.build(path) match {
           case Success(value) => processTool(path, completeConf, files, builder)
-          case Failure(value) => Try(throw value)
+          case Failure(throwable) => Failure(throwable)
         }
       case _ => Failure(new Exception("Could not support project compilation."))
     }
@@ -64,7 +64,7 @@ object FindBugsSec extends Tool {
 
     val (command, componentProjects) = toolCommand(path, conf, builder)
     CommandRunner.exec(command) match {
-      case Left(failure) => Try(throw failure)
+      case Left(failure) => Failure(failure)
       case Right(output) if output.exitCode != 0 =>
         Failure(new Exception("Can't execute tool."))
 
