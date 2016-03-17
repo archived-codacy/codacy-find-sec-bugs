@@ -1,4 +1,5 @@
-
+[![Codacy Badge](https://api.codacy.com/project/badge/grade/6d53ef77cc284e4bbe1bf65b6a4e1a56)](https://www.codacy.com/app/Codacy/codacy-find-sec-bugs)
+[![Circle CI](https://circleci.com/gh/codacy/codacy-find-sec-bugs.svg?style=svg)](https://circleci.com/gh/codacy/codacy-find-sec-bugs)
 # Codacy Find Security Bugs
 
 This is the docker engine we use at Codacy to have [Find Security Bugs](http://find-sec-bugs.github.io/) support.
