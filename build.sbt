@@ -26,8 +26,11 @@ enablePlugins(DockerPlugin)
 version in Docker := "1.0"
 
 val installAll =
-  s"""apt-get update &&
+  s"""echo "deb http://dl.bintray.com/sbt/debian /" | sudo tee -a /etc/apt/sources.list.d/sbt.list &&
+     |sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 642AC823 &&
+     |apt-get -y update &&
      |apt-get -y install maven &&
+     |apt-get -y install sbt &&
      |wget https://github.com/find-sec-bugs/find-sec-bugs/releases/download/version-1.4.4/findsecbugs-cli.zip &&
      |mkdir /opt/docker/findbugs &&
      |unzip findsecbugs-cli.zip -d /opt/docker/findbugs""".stripMargin.replaceAll(System.lineSeparator(), " ")
