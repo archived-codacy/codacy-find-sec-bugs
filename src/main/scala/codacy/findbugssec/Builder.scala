@@ -69,10 +69,7 @@ object BuilderFactory {
 
   def apply(path: Path): Option[Builder] = {
     val builders = knownBuilders.filter{ case builder => builder.supported(path)}
-    builders.nonEmpty match {
-      case true => builders.headOption
-      case false => Option.empty
-    }
+    builders.headOption
   }
 
 }
