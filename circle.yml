@@ -1,9 +1,13 @@
 machine:
+  java:
+    version: oraclejdk8
   services:
     - docker
 
 dependencies:
   override:
+    - sbt sbtVersion
+    - sbt scalaVersion
     - sbt "set version in Docker := \"latest\"" "set name := \"$CIRCLE_PROJECT_REPONAME\"" docker:publishLocal
 
 test:
