@@ -12,7 +12,7 @@ sealed trait Builder {
   val command: List[String]
   val pathComponents: Seq[String]
   def supported(path: Path): Boolean
-  def targetOfDirectory(path: File): String
+  def targetOfDirectory(path: File): Option[String]
 
   private def buildWithCommand(command: List[String], path: Path): Try[Boolean] = {
     CommandRunner.exec(command, dir = Option(path.toFile)) match {
@@ -37,8 +37,8 @@ object MavenBuilder extends Builder {
     path.toFile.list.contains("pom.xml")
   }
 
-  def targetOfDirectory(path: File): String = {
-    Seq(path.getAbsolutePath, "target", "classes").mkString(File.separator)
+  def targetOfDirectory(path: File): Option[String] = {
+    Some(Seq(path.getAbsolutePath, "target", "classes").mkString(File.separator))
   }
 
 }
@@ -51,11 +51,17 @@ object SBTBuilder extends Builder {
     path.toFile.list.contains("build.sbt")
   }
 
-  def targetOfDirectory(path: File): String = {
-    val potentialTargets = path.list.filter { case filepath => filepath.startsWith("scala-")}
-    // TODO: Cleaner way to do this?
-    val scalaDirectory = potentialTargets.headOption.fold("") { case target => target}
-    Seq(path.getAbsolutePath, "target", scalaDirectory, "classes").mkString(File.separator)
+  def targetOfDirectory(path: File): Option[String] = {
+    val target = new File(Seq(path.getAbsolutePath, "target").mkString(File.separator))
+    target.exists match {
+      case true =>
+        val potentialScalaDir = target.list.filter { case filepath => filepath.startsWith("scala-")}
+        // TODO: Cleaner way to do this?
+        val scalaDirectory = potentialScalaDir.headOption.fold("") { case target => target}
+        Some(Seq(target.getAbsolutePath, scalaDirectory, "classes").mkString(File.separator))
+      case false =>
+        Option.empty
+    }
   }
 }
 

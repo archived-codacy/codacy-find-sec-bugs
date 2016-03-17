@@ -53,7 +53,7 @@ object FindBugsSec extends Tool {
         List()
     }
     val componentProjects = collectTargets(path, builder)
-    val targets = componentProjects.map(builder.targetOfDirectory)
+    val targets = componentProjects.flatMap(builder.targetOfDirectory).toSeq
     (defaultCmd ++ configuredPatterns ++ targets, componentProjects)
   }
 
@@ -166,8 +166,12 @@ object FindBugsSec extends Tool {
     val directories = path.toFile.listFiles.filter(_.isDirectory) ++ Seq(path.toFile)
     directories.filter {
       case directory =>
-        val target = new File(builder.targetOfDirectory(directory))
-        target.exists
+        builder.targetOfDirectory(directory).fold(false) {
+          case target =>
+            val targetFile = new File(target)
+            targetFile.exists
+        }
+
     }
   }
 }
