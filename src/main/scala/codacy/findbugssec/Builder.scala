@@ -34,11 +34,11 @@ object MavenBuilder extends Builder {
   val pathComponents = Seq("src", "main", "java")
 
   def supported(path: Path): Boolean = {
-    path.toFile.list.filter(_ == "pom.xml").nonEmpty
+    path.toFile.list.contains("pom.xml")
   }
 
   def targetOfDirectory(path: File): String = {
-    Seq(path.getAbsolutePath(), "target", "classes").mkString(File.separator)
+    Seq(path.getAbsolutePath, "target", "classes").mkString(File.separator)
   }
 
 }
@@ -48,14 +48,14 @@ object SBTBuilder extends Builder {
   val pathComponents = Seq("src", "main", "scala")
 
   def supported(path: Path): Boolean = {
-    path.toFile.list.filter(_ == "build.sbt").nonEmpty
+    path.toFile.list.contains("build.sbt")
   }
 
   def targetOfDirectory(path: File): String = {
     val potentialTargets = path.list.filter { case filepath => filepath.startsWith("scala-")}
     // TODO: Cleaner way to do this?
     val scalaDirectory = potentialTargets.headOption.fold("") { case target => target}
-    Seq(path.getAbsolutePath(), "target", scalaDirectory, "classes").mkString(File.separator)
+    Seq(path.getAbsolutePath, "target", scalaDirectory, "classes").mkString(File.separator)
   }
 }
 
