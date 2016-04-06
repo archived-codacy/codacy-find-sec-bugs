@@ -4,20 +4,21 @@ import java.io.File
 import java.nio.file.Path
 
 import codacy.dockerApi._
+import codacy.dockerApi.traits.Builder
 import codacy.dockerApi.utils.{CommandRunner, FileHelper, ToolHelper}
 
 import scala.util.{Failure, Success, Try}
-import scala.xml.{XML, Node}
+import scala.xml.{Node, XML}
 
 
-private class Occurence(val lineno: Integer, val path: String) {
+private case class Occurence(lineno: Integer, path: String) {
   lazy val packageName = path.split(File.separatorChar).headOption.getOrElse("")
   lazy val components = path.split(File.separatorChar)
 }
 
-private class BugInstance(val name: String, val message: String, val occurence: Occurence)
+private case class BugInstance(name: String, message: String, occurence: Occurence)
 
-private class SourceDirectory(val absolutePath: File) {
+private case class SourceDirectory(absolutePath: File) {
 
   lazy val absoluteStringPath = absolutePath.getAbsolutePath
 
@@ -41,9 +42,8 @@ object FindBugsSec extends Tool {
     }
   }
 
-  private[this] def toolCommand(path: Path, conf: Option[List[PatternDef]], builder: Builder) = {
-    val defaultCmd = List("java", "-jar", "findbugssec.jar",
-                          "-xml:withMessages", "-output", "/tmp/output.xml")
+  private[this] def toolCommand(path: Path, outputPath: Path, conf: Option[List[PatternDef]], builder: Builder) = {
+    val defaultCmd = List("java", "-jar", "findbugssec.jar", "-xml:withMessages", "-output", outputPath.toString)
     val configuredPatterns = conf match {
       case Some(conf) if conf.nonEmpty =>
         val configurationFile = patternIncludeXML(conf)
@@ -60,8 +60,8 @@ object FindBugsSec extends Tool {
                                 conf: Option[List[PatternDef]],
                                 files: Option[Set[Path]],
                                 builder: Builder): Try[List[Result]] = {
-
-    val (command, sourceDirs) = toolCommand(path, conf, builder)
+    val outputPath = FileHelper.createTmpFile("", "findsecbugs-output", ".xml")
+    val (command, sourceDirs) = toolCommand(path, outputPath, conf, builder)
     CommandRunner.exec(command) match {
       case Left(throwable) => Failure(throwable)
       case Right(output) if output.exitCode != 0 =>
@@ -69,7 +69,7 @@ object FindBugsSec extends Tool {
 
       case Right(_) =>
         Try {
-          val bugs = parseOutputFile()
+          val bugs = parseOutputFile(outputPath)
           resultsFromBugInstances(bugs, sourceDirs, files, builder).toList
         }
     }
@@ -77,7 +77,7 @@ object FindBugsSec extends Tool {
 
   private[this] def elementPathAndLine(elem: Node): Option[Seq[Occurence]] = {
     for {
-      start      <- elem.attribute("start")
+      start <- elem.attribute("start")
       sourcepath <- elem.attribute("sourcepath")
     } yield {
       (start zip sourcepath).map { case (startNode, sourcePathNode) =>
@@ -111,21 +111,21 @@ object FindBugsSec extends Tool {
         case directory if foundOriginDirectories.size == 1 && isFileEnabled(sourceFileName(directory, bug), files) =>
           val filename = sourceFileName(directory, bug)
           Issue(SourcePath(filename),
-                ResultMessage(bug.message),
-                PatternId(bug.name),
-                ResultLine(bug.occurence.lineno))
+            ResultMessage(bug.message),
+            PatternId(bug.name),
+            ResultLine(bug.occurence.lineno))
         case directory if foundOriginDirectories.size > 1 && isFileEnabled(sourceFileName(directory, bug), files) =>
           val filename = sourceFileName(directory, bug)
           FileError(SourcePath(filename),
-                    Option(ErrorMessage("File duplicated in multiple directories.")))
+            Option(ErrorMessage("File duplicated in multiple directories.")))
 
       }
       results
     }
   }
 
-  private[this] def parseOutputFile(): Seq[BugInstance] = {
-    val xmlOutput = XML.loadFile("/tmp/output.xml")
+  private[this] def parseOutputFile(outputPath: Path): Seq[BugInstance] = {
+    val xmlOutput = XML.loadFile(outputPath.toString)
     val bugInstances = xmlOutput \ "BugInstance"
     bugInstances.flatMap { case bugInstance =>
       // If the there is a SourceLine under the BugInstance, then that is
@@ -149,15 +149,14 @@ object FindBugsSec extends Tool {
   }
 
   private[this] def patternIncludeXML(conf: List[PatternDef]): String = {
-    val xmlLiteral = <FindBugsFilter>{
-      conf.map( pattern =>
+    val xmlLiteral = <FindBugsFilter>
+      {conf.map(pattern =>
         <Match>
           <Bug pattern={pattern.patternId.value}/>
         </Match>
-      )
-    }
+      )}
     </FindBugsFilter>.toString
-    val tmp = FileHelper.createTmpFile(xmlLiteral, "findsecbugs", "")
+    val tmp = FileHelper.createTmpFile(xmlLiteral, "findsecbugs", ".xml")
     tmp.toAbsolutePath.toString
   }
 
