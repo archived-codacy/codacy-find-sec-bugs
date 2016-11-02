@@ -41,19 +41,20 @@ object FindBugsSec extends Tool {
     }
   }
 
+  private lazy val configFilenames = Set("findbugs.xml")
+  private val defaultCmd = List("java", "-jar", "findbugssec.jar", "-xml:withMessages", "-output", "/tmp/output.xml")
+
   private[this] def toolCommand(path: Path, conf: Option[List[PatternDef]], builder: Builder) = {
-    val defaultCmd = List("java", "-jar", "findbugssec.jar",
-                          "-xml:withMessages", "-output", "/tmp/output.xml")
-    val configuredPatterns = conf match {
-      case Some(conf) if conf.nonEmpty =>
-        val configurationFile = patternIncludeXML(conf)
-        List("-include", configurationFile)
-      case _ =>
-        List()
-    }
+
+    lazy val nativeConf = configFilenames.map( cfgFile => Try(new better.files.File(path) / cfgFile))
+      .collectFirst{ case Success(file) if file.isRegularFile => file.toJava.getAbsolutePath }
+
+    val rulesParams = conf.map( patternIncludeXML ).orElse( nativeConf )
+      .map( rules => List("-include", rules) ).getOrElse(List.empty)
+
     val sourceDirs = collectTargets(path, builder)
     val targetDirs = sourceDirs.flatMap(builder.targetOfDirectory).toSeq
-    (defaultCmd ++ configuredPatterns ++ targetDirs, sourceDirs)
+    (defaultCmd ++ rulesParams ++ targetDirs, sourceDirs)
   }
 
   private[this] def processTool(path: Path,

@@ -1,10 +1,11 @@
-//#Patterns: HARD_CODE_PASSWORD
+//#Patterns: HARD_CODE_PASSWORD, PREDICTABLE_RANDOM
 package codacy;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
+import java.util.Random;
 
 public class JdbcDriverConnection {
 
@@ -24,5 +25,11 @@ public class JdbcDriverConnection {
         String username = props.getProperty("username");
         String password = props.getProperty("password");
         Connection conn = DriverManager.getConnection("jdbc:mysql://prod.company.com/production", username, password);
+    }
+
+    public static String generateSecretToken() {
+        //#Err: PREDICTABLE_RANDOM
+        Random r = new Random();
+        return Long.toHexString(r.nextLong());
     }
 }
