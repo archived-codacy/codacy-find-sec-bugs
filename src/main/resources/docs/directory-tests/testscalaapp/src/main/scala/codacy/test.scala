@@ -3,7 +3,7 @@
 //#Issue: {"severity": "Error", "line": 21, "patternId": "WEAK_TRUST_MANAGER"}
 // Just copy-paste this code to wherever, and call
 // destroyAllSSLSecurityForTheEntireVMForever method to freely enjoy the wild
-// world of invlaid SSL certificates.
+// world of invalid SSL certificates.
 package codacy
 
 
