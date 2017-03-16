@@ -46,8 +46,7 @@ object FindBugsSec extends Tool {
 
   private[this] def toolCommand(path: Path, conf: Option[List[PatternDef]], builder: Builder) = {
 
-    lazy val nativeConf = configFilenames.map( cfgFile => Try(new better.files.File(path) / cfgFile))
-      .collectFirst{ case Success(file) if file.isRegularFile => file.toJava.getAbsolutePath }
+    lazy val nativeConf = FileHelper.findConfigurationFile(configFilenames, path).map(_.toString)
 
     val rulesParams = conf.map( patternIncludeXML ).orElse( nativeConf )
       .map( rules => List("-include", rules) ).getOrElse(List.empty)
