@@ -1,6 +1,9 @@
 //#Patterns: WEAK_TRUST_MANAGER
-//#Issue: {"severity": "Error", "line": 19, "patternId": "WEAK_TRUST_MANAGER"}
-//#Issue: {"severity": "Error", "line": 21, "patternId": "WEAK_TRUST_MANAGER"}
+//#Issue: {"severity": "Error", "line": 22, "patternId": "WEAK_TRUST_MANAGER"}
+//#Issue: {"severity": "Error", "line": 23, "patternId": "WEAK_TRUST_MANAGER"}
+//#Issue: {"severity": "Error", "line": 24, "patternId": "WEAK_TRUST_MANAGER"}
+//#Issue: {"severity": "Error", "line": 35, "patternId": "WEAK_TRUST_MANAGER"}
+//#Issue: {"severity": "Error", "line": 44, "patternId": "WEAK_TRUST_MANAGER"}
 // Just copy-paste this code to wherever, and call
 // destroyAllSSLSecurityForTheEntireVMForever method to freely enjoy the wild
 // world of invalid SSL certificates.

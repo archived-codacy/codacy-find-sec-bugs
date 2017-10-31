@@ -1,23 +1,25 @@
 package codacy.findbugssec
 
-import codacy.dockerApi._
-import codacy.dockerApi.utils.{CommandRunner, FileHelper, ToolHelper}
 import java.io.File
 import java.nio.file.Path
+
+import codacy.dockerApi._
+import codacy.dockerApi.utils.{CommandRunner, FileHelper, ToolHelper}
+
 import scala.util.{Failure, Success, Try}
 import scala.xml.{Node, XML}
 
 
 private class Occurence(val lineno: Integer, val path: String) {
-  lazy val packageName = path.split(File.separatorChar).headOption.getOrElse("")
-  lazy val components = path.split(File.separatorChar)
+  lazy val packageName: String = path.split(File.separatorChar).headOption.getOrElse("")
+  lazy val components: Array[String] = path.split(File.separatorChar)
 }
 
 private class BugInstance(val name: String, val message: String, val occurence: Occurence)
 
 private class SourceDirectory(val absolutePath: File) {
 
-  lazy val absoluteStringPath = absolutePath.getAbsolutePath
+  lazy val absoluteStringPath: String = absolutePath.getAbsolutePath
 
   def subdirectoryExists(components: Seq[String]): Boolean = {
     val pathComponents = Seq(absoluteStringPath) ++ components
@@ -26,6 +28,9 @@ private class SourceDirectory(val absolutePath: File) {
 }
 
 object FindBugsSec extends Tool {
+
+  private val outputFile: String = "/tmp/output.xml"
+  private val findBugsLocation: String = "/opt/docker/findbugs"
 
   override def apply(path: Path, conf: Option[List[PatternDef]], files: Option[Set[Path]])(implicit spec: Spec): Try[List[Result]] = {
     BuilderFactory(path) match {
@@ -42,7 +47,8 @@ object FindBugsSec extends Tool {
   private lazy val configFilenames = Set("findbugs.xml", "findbugs-includes.xml")
   private lazy val excludeFilenames = Set("findbugs-excludes.xml")
 
-  private val defaultCmd = List("java", "-jar", "findbugssec.jar", "-xml:withMessages", "-output", "/tmp/output.xml")
+  private val defaultCmd = List("java", "-cp", s"$findBugsLocation/lib/*", "edu.umd.cs.findbugs.LaunchAppropriateUI", "-quiet",
+    "-pluginList", s"$findBugsLocation/lib/findsecbugs-plugin-1.7.1.jar", "-xml:withMessages", "-output", outputFile)
 
   private[this] def toolCommand(path: Path, conf: Option[List[PatternDef]], builder: Builder) = {
 
@@ -127,7 +133,7 @@ object FindBugsSec extends Tool {
   }
 
   private[this] def parseOutputFile(): Seq[BugInstance] = {
-    val xmlOutput = XML.loadFile("/tmp/output.xml")
+    val xmlOutput = XML.loadFile(outputFile)
     val bugInstances = xmlOutput \ "BugInstance"
     bugInstances.flatMap { bugInstance =>
       // If the there is a SourceLine under the BugInstance, then that is
@@ -169,4 +175,5 @@ object FindBugsSec extends Tool {
     directories.filter(directory =>
       builder.targetOfDirectory(directory).fold(false)(target => new File(target).exists))
   }
+
 }
