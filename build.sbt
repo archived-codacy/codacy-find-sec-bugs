@@ -31,7 +31,7 @@ val installAll =
      |apt-get -y update &&
      |apt-get -y install maven &&
      |apt-get -y install sbt &&
-     |wget https://github.com/find-sec-bugs/find-sec-bugs/releases/download/version-1.4.4/findsecbugs-cli.zip &&
+     |wget https://github.com/find-sec-bugs/find-sec-bugs/releases/download/version-1.7.1/findsecbugs-cli.zip &&
      |mkdir /opt/docker/findbugs &&
      |unzip findsecbugs-cli.zip -d /opt/docker/findbugs""".stripMargin.replaceAll(System.lineSeparator(), " ")
 
