@@ -2,9 +2,9 @@ import com.typesafe.sbt.packager.docker.{Cmd, ExecCmd}
 
 name := """codacy-engine-findbugs-security"""
 
-version := "1.0"
+version := "1.0.0"
 
-val languageVersion = "2.11.7"
+val languageVersion = "2.11.8"
 
 scalaVersion := languageVersion
 
@@ -25,34 +25,36 @@ enablePlugins(DockerPlugin)
 
 version in Docker := "1.0"
 
+val findBugsVersion = "1.7.1"
+
 val installAll =
   s"""echo "deb http://dl.bintray.com/sbt/debian /" | sudo tee -a /etc/apt/sources.list.d/sbt.list &&
      |sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 642AC823 &&
      |apt-get -y update &&
      |apt-get -y install maven &&
      |apt-get -y install sbt &&
-     |wget https://github.com/find-sec-bugs/find-sec-bugs/releases/download/version-1.4.4/findsecbugs-cli.zip &&
+     |wget https://github.com/find-sec-bugs/find-sec-bugs/releases/download/version-$findBugsVersion/findsecbugs-cli-$findBugsVersion.zip &&
      |mkdir /opt/docker/findbugs &&
-     |unzip findsecbugs-cli.zip -d /opt/docker/findbugs""".stripMargin.replaceAll(System.lineSeparator(), " ")
+     |unzip findsecbugs-cli-$findBugsVersion.zip -d /opt/docker/findbugs""".stripMargin.replaceAll(System.lineSeparator(), " ")
 
-mappings in Universal <++= (resourceDirectory in Compile) map { (resourceDir: File) =>
+mappings in Universal ++= resourceDirectory.in(Compile).map { (resourceDir: File) =>
   val src = resourceDir / "docs"
   val dest = "/docs"
 
   for {
-    path <- (src ***).get
+    path <- src.***.get
     if !path.isDirectory
   } yield path -> path.toString.replaceFirst(src.toString, dest)
-}
+}.value
 
-mappings in Universal <++= (baseDirectory in Compile) map { (directory: File) =>
+mappings in Universal ++= baseDirectory.in(Compile).map { (directory: File) =>
   val src = directory / "jar"
 
   for {
-    path <- (src ***).get
+    path <- src.***.get
     if !path.isDirectory
   } yield path -> src.toPath.relativize(path.toPath).toString
-}
+}.value
 
 val dockerUser = "docker"
 val dockerGroup = "docker"
@@ -70,7 +72,7 @@ dockerCommands := dockerCommands.value.flatMap {
   case cmd@(Cmd("ADD", "opt /opt")) => List(cmd,
     Cmd("RUN", "mv /opt/docker/docs /docs"),
     Cmd("RUN", "adduser --uid 2004 --disabled-password --gecos \"\" docker"),
-    Cmd("RUN", "mv /opt/docker/findbugs/findsecbugs-cli-1.4.4.jar /opt/docker/findbugssec.jar"),
+    Cmd("RUN", s"chmod +x /opt/docker/findbugs/findsecbugs.sh"),
     ExecCmd("RUN", Seq("chown", "-R", s"$dockerUser:$dockerGroup", "/docs"): _*)
   )
   case other => List(other)
