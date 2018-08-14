@@ -9,13 +9,12 @@ import codacy.dockerApi.utils.{CommandRunner, FileHelper, ToolHelper}
 import scala.util.{Failure, Success, Try}
 import scala.xml.{Node, XML}
 
-
-private class Occurence(val lineno: Integer, val path: String) {
+private class Occurrence(val lineNo: Integer, val path: String) {
   lazy val packageName: String = path.split(File.separatorChar).headOption.getOrElse("")
   lazy val components: Array[String] = path.split(File.separatorChar)
 }
 
-private class BugInstance(val name: String, val message: String, val occurence: Occurence)
+private class BugInstance(val name: String, val message: String, val occurrence: Occurrence)
 
 private class SourceDirectory(val absolutePath: File) {
 
@@ -83,19 +82,19 @@ object FindBugsSec extends Tool {
     }
   }
 
-  private[this] def elementPathAndLine(elem: Node): Option[Seq[Occurence]] = {
+  private[this] def elementPathAndLine(elem: Node): Option[Seq[Occurrence]] = {
     for {
       start <- elem.attribute("start")
-      sourcepath <- elem.attribute("sourcepath")
+      sourcePath <- elem.attribute("sourcepath")
     } yield {
-      (start zip sourcepath).map { case (startNode, sourcePathNode) =>
-        new Occurence(startNode.text.toInt, sourcePathNode.text)
+      (start zip sourcePath).map { case (startNode, sourcePathNode) =>
+        new Occurrence(startNode.text.toInt, sourcePathNode.text)
       }
     }
   }
 
   private[this] def sourceFileName(directory: SourceDirectory, bug: BugInstance) = {
-    Seq(directory.absoluteStringPath, bug.occurence.path).mkString(File.separator)
+    Seq(directory.absoluteStringPath, bug.occurrence.path).mkString(File.separator)
   }
 
   private[this] def isFileEnabled(path: String, filesOpt: Option[Set[Path]]): Boolean = {
@@ -113,7 +112,7 @@ object FindBugsSec extends Tool {
     }
 
     bugs.flatMap { bug =>
-      val foundOriginDirectories = sourceDirectories.filter(_.subdirectoryExists(bug.occurence.components))
+      val foundOriginDirectories = sourceDirectories.filter(_.subdirectoryExists(bug.occurrence.components))
 
       val results: Seq[Result] = foundOriginDirectories.collect {
         case directory if foundOriginDirectories.length == 1 && isFileEnabled(sourceFileName(directory, bug), files) =>
@@ -121,7 +120,7 @@ object FindBugsSec extends Tool {
           Issue(SourcePath(filename),
             ResultMessage(bug.message),
             PatternId(bug.name),
-            ResultLine(bug.occurence.lineno))
+            ResultLine(bug.occurrence.lineNo))
         case directory if foundOriginDirectories.length > 1 && isFileEnabled(sourceFileName(directory, bug), files) =>
           val filename = sourceFileName(directory, bug)
           FileError(SourcePath(filename),
@@ -138,13 +137,13 @@ object FindBugsSec extends Tool {
     bugInstances.flatMap { bugInstance =>
       // If the there is a SourceLine under the BugInstance, then that is
       // the line that will reported. The only issue though is only the first
-      // occurence is emitted, even though there can be many more, that's why we're
+      // occurrence is emitted, even though there can be many more, that's why we're
       // using .head down here.
-      val sourceLineOccurences = bugInstance \ "SourceLine"
+      val sourceLineOccurrences = bugInstance \ "SourceLine"
       val patternName = bugInstance \@ "type"
       val message = (bugInstance \ "LongMessage").head.text
-      val occurences = (if (sourceLineOccurences.nonEmpty) {
-        elementPathAndLine(sourceLineOccurences.head)
+      val occurences = (if (sourceLineOccurrences.nonEmpty) {
+        elementPathAndLine(sourceLineOccurrences.head)
       } else {
         val methodSourceLine = bugInstance \ "Method"
         if (methodSourceLine.nonEmpty) {
@@ -170,7 +169,7 @@ object FindBugsSec extends Tool {
   }
 
   private[this] def collectTargets(path: Path, builder: Builder): Array[File] = {
-    // Get the directories that can be projects (including subprojects and the current directory).
+    // Get the directories that can be projects (including sub-projects and the current directory).
     val directories = path.toFile.listFiles.filter(_.isDirectory) ++ Seq(path.toFile)
     directories.filter(directory =>
       builder.targetOfDirectory(directory).fold(false)(target => new File(target).exists))
