@@ -7,7 +7,6 @@ import scala.util.{Success, Failure, Try}
 
 import codacy.dockerApi.utils.CommandRunner
 
-
 sealed trait Builder {
   val command: List[String]
   val pathComponents: Seq[String]
@@ -20,7 +19,7 @@ sealed trait Builder {
       case Right(output) if output.exitCode != 0 =>
         Failure(new Exception("Can't compile project."))
 
-      case Right(output) => Success(true)
+      case Right(_) => Success(true)
     }
   }
 
@@ -53,14 +52,13 @@ object SBTBuilder extends Builder {
 
   def targetOfDirectory(path: File): Option[String] = {
     val target = new File(Seq(path.getAbsolutePath, "target").mkString(File.separator))
-    target.exists match {
-      case true =>
-        val potentialScalaDir = target.list.filter { case filepath => filepath.startsWith("scala-")}
-        // TODO: Cleaner way to do this?
-        val scalaDirectory = potentialScalaDir.headOption.fold("") { case target => target}
-        Some(Seq(target.getAbsolutePath, scalaDirectory, "classes").mkString(File.separator))
-      case false =>
-        Option.empty
+    if (target.exists) {
+      val potentialScalaDir = target.list.filter(filepath => filepath.startsWith("scala-"))
+      // TODO: Cleaner way to do this?
+      val scalaDirectory = potentialScalaDir.headOption.fold("")(target => target)
+      Some(Seq(target.getAbsolutePath, scalaDirectory, "classes").mkString(File.separator))
+    } else {
+      Option.empty
     }
   }
 }
@@ -74,7 +72,7 @@ object BuilderFactory {
   )
 
   def apply(path: Path): Option[Builder] = {
-    val builders = knownBuilders.filter{ case builder => builder.supported(path)}
+    val builders = knownBuilders.filter(builder => builder.supported(path))
     builders.headOption
   }
 
