@@ -1,0 +1,119 @@
+version: 2
+
+references:
+
+  sbt_jvm_defaults: &sbt_jvm_defaults
+    JAVA_OPTS: -Xmx3200m
+
+  default_sbt_job: &default_sbt_job
+    machine: true
+    working_directory: ~/workdir
+    environment:
+      <<: *sbt_jvm_defaults
+
+  restore_sbt_cache: &restore_sbt_cache
+    restore_cache:
+      keys:
+        - sbt-cache-{{ .Branch }}-{{ checksum "build.sbt" }}-{{ .Environment.CIRCLE_SHA1 }}
+        - sbt-cache-{{ .Branch }}-{{ checksum "build.sbt" }}
+        - sbt-cache-{{ .Branch }}
+        - sbt-cache
+
+  clean_sbt_cache: &clean_sbt_cache
+    run:
+      name: CleanCache
+      command: |
+        find $HOME/.sbt -name "*.lock" | xargs rm | true
+        find $HOME/.ivy2 -name "ivydata-*.properties" | xargs rm | true
+
+  save_sbt_cache: &save_sbt_cache
+    save_cache:
+      key: sbt-cache-{{ .Branch }}-{{ checksum "build.sbt" }}-{{ .Environment.CIRCLE_SHA1 }}
+      paths:
+        - "~/.ivy2"
+        - "~/.m2"
+        - "~/.sbt"
+        - "~/codacy-plugins-test/target"
+        - "~/codacy-plugins-test/project/target"
+        - "~/codacy-plugins-test/project/project"
+        - "~/workdir/target"
+        - "~/workdir/project/target"
+        - "~/workdir/project/project"
+
+jobs:
+  checkout_and_version:
+    docker:
+      - image: codacy/git-version:latest
+    working_directory: ~/workdir
+    steps:
+      - checkout
+      - run:
+          name: Set version
+          command: /bin/git-version > .version
+      - run:
+          name: Set Sbt version
+          command: echo "version in ThisBuild := \"$(cat .version)\"" > version.sbt
+      - run:
+          name: Current version
+          command: cat .version
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - workdir/*
+
+  compile_test_publish:
+    <<: *default_sbt_job
+    working_directory: ~/workdir
+    steps:
+      - attach_workspace:
+          at: ~/
+      - *restore_sbt_cache
+      - run:
+          name: Clone test project
+          working_directory: ~/
+          command: |
+            (git -C ~/codacy-plugins-test fetch --all &&
+              git -C ~/codacy-plugins-test reset --hard origin/master) ||
+                (rm -rf ~/codacy-plugins-test &&
+                  git clone git://github.com/codacy/codacy-plugins-test.git ~/codacy-plugins-test)
+      - run:
+          name: Check formatting
+          command: sbt ";scalafmt::test;test:scalafmt::test;sbt:scalafmt::test"
+      - run:
+          name: Compile test project
+          working_directory: ~/codacy-plugins-test
+          command: sbt compile
+      - run:
+          name: Publish tool docker locally
+          working_directory: ~/workdir
+#          command: sbt ";set version in Docker := \"latest\"; set name := \"$CIRCLE_PROJECT_REPONAME\"; docker:publishLocal"
+          command: docker build --no-cache -t codacy-find-sec-bugs:latest .
+      - *clean_sbt_cache
+      - *save_sbt_cache
+      - run:
+          name: Test json
+          working_directory: ~/codacy-plugins-test
+          command: sbt -Dcodacy.tests.ignore.descriptions=true "runMain codacy.plugins.DockerTest json $CIRCLE_PROJECT_REPONAME:latest"
+      - run:
+          name: Test patterns
+          working_directory: ~/codacy-plugins-test
+          command: sbt -Dcodacy.tests.noremove=true -Dcodacy.tests.threads=8 "runMain codacy.plugins.DockerTest pattern $CIRCLE_PROJECT_REPONAME:latest"
+      - deploy:
+          name: Push application Docker image
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              docker login -u $DOCKER_USER -p $DOCKER_PASS
+              docker tag $CIRCLE_PROJECT_REPONAME codacy/$CIRCLE_PROJECT_REPONAME
+              docker tag $CIRCLE_PROJECT_REPONAME codacy/$CIRCLE_PROJECT_REPONAME:1.2.$CIRCLE_BUILD_NUM
+              docker push codacy/$CIRCLE_PROJECT_REPONAME
+            fi
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - checkout_and_version
+      - compile_test_publish:
+          context: CodacyAWS
+          requires:
+            - checkout_and_version

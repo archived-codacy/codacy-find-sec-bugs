@@ -1,5 +1,6 @@
 {
   "name": "FindBugsSecurity",
+  "version": "1.9.0",
   "patterns": [
 
     {
@@ -499,6 +500,5 @@
       "level": "Error",
       "category": "Security"
     }
-
   ]
 }

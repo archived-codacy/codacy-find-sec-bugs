@@ -1,21 +1,17 @@
 //#Patterns: WEAK_TRUST_MANAGER
-//#Issue: {"severity": "Error", "line": 22, "patternId": "WEAK_TRUST_MANAGER"}
-//#Issue: {"severity": "Error", "line": 23, "patternId": "WEAK_TRUST_MANAGER"}
-//#Issue: {"severity": "Error", "line": 24, "patternId": "WEAK_TRUST_MANAGER"}
-//#Issue: {"severity": "Error", "line": 35, "patternId": "WEAK_TRUST_MANAGER"}
-//#Issue: {"severity": "Error", "line": 44, "patternId": "WEAK_TRUST_MANAGER"}
-// Just copy-paste this code to wherever, and call
-// destroyAllSSLSecurityForTheEntireVMForever method to freely enjoy the wild
-// world of invalid SSL certificates.
 package codacy
 
+//#Issue: {"severity": "Error", "line": 18, "patternId": "WEAK_TRUST_MANAGER"}
+//#Issue: {"severity": "Error", "line": 19, "patternId": "WEAK_TRUST_MANAGER"}
+//#Issue: {"severity": "Error", "line": 20, "patternId": "WEAK_TRUST_MANAGER"}
+//#Issue: {"severity": "Error", "line": 29, "patternId": "WEAK_TRUST_MANAGER"}
+//#Issue: {"severity": "Error", "line": 38, "patternId": "WEAK_TRUST_MANAGER"}
 
 import javax.net.ssl.{ X509TrustManager, SSLContext }
 
 object SecurityBypasser {
   import java.security.cert.X509Certificate
   import javax.net.ssl._
-
 
   // The all-permisive trust manager.
   object AllTM extends X509TrustManager {
@@ -24,12 +20,10 @@ object SecurityBypasser {
     def checkServerTrusted(certs: Array[X509Certificate], authType: String) {}
   }
 
-
   // The all-permissive hostname verifier.
   object AllHosts extends HostnameVerifier {
     def verify(urlHostName: String, session: SSLSession) = true
   }
-
 
   def destroyAllSSLSecurityForTheEntireVMForever() {
     val trustAllCerts = Array[TrustManager](AllTM)
