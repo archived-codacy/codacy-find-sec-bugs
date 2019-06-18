@@ -1,10 +1,13 @@
 package codacy.findbugssec
 
 import java.io.File
-import java.nio.file.Path
+import java.nio.file.{Path, Paths}
 
-import codacy.dockerApi._
-import codacy.dockerApi.utils.{CommandRunner, FileHelper, ToolHelper}
+import com.codacy.plugins.api.results.Result.Issue
+import com.codacy.plugins.api.{ErrorMessage, Options, Source}
+import com.codacy.plugins.api.results.{Pattern, Result, Tool}
+import com.codacy.tools.scala.seed.utils.{CommandRunner, FileHelper}
+import com.codacy.tools.scala.seed.utils.ToolHelper._
 
 import scala.util.{Failure, Success, Try}
 import scala.xml.{Node, XML}
@@ -32,10 +35,14 @@ object FindBugsSec extends Tool {
   private val outputFile: String = "/tmp/output.xml"
   private val findBugsLocation: String = "/opt/docker/findbugs"
 
-  override def apply(path: Path, conf: Option[List[PatternDef]], files: Option[Set[Path]])(implicit spec: Spec): Try[List[Result]] = {
+  def apply(source: Source.Directory,
+            configuration: Option[List[Pattern.Definition]],
+            files: Option[Set[Source.File]],
+            options: Map[Options.Key, Options.Value])(implicit specification: Tool.Specification): Try[List[Result]] = {
+    val path = Paths.get(source.path)
     BuilderFactory(path) match {
       case Some(builder) =>
-        val completeConf = ToolHelper.getPatternsToLint(conf)
+        val completeConf = configuration.withDefaultParameters(specification)
         builder.build(path) match {
           case Success(_) => processTool(path, completeConf, files, builder)
           case Failure(throwable) => Failure(throwable)
@@ -50,10 +57,10 @@ object FindBugsSec extends Tool {
   private val defaultCmd = List("java", "-cp", s"$findBugsLocation/lib/*", "edu.umd.cs.findbugs.LaunchAppropriateUI", "-quiet",
     "-pluginList", s"$findBugsLocation/lib/findsecbugs-plugin-1.7.1.jar", "-xml:withMessages", "-output", outputFile)
 
-  private[this] def toolCommand(path: Path, conf: Option[List[PatternDef]], builder: Builder) = {
+  private[this] def toolCommand(path: Path, conf: Option[List[Pattern.Definition]], builder: Builder) = {
 
-    lazy val nativeConf = FileHelper.findConfigurationFile(configFilenames, path).map(_.toString)
-    lazy val excludeFile = FileHelper.findConfigurationFile(excludeFilenames, path).map(_.toString)
+    lazy val nativeConf = FileHelper.findConfigurationFile(path, configFilenames).map(_.toString)
+    lazy val excludeFile = FileHelper.findConfigurationFile(path, excludeFilenames).map(_.toString)
 
     val rulesParams = conf.map(patternIncludeXML).map(rules => List("-include", rules)).getOrElse {
       (nativeConf.map(List("-include", _)) ++ excludeFile.map(List("-exclude", _))).flatten
@@ -65,8 +72,8 @@ object FindBugsSec extends Tool {
   }
 
   private[this] def processTool(path: Path,
-                                conf: Option[List[PatternDef]],
-                                files: Option[Set[Path]],
+                                conf: Option[List[Pattern.Definition]],
+                                files: Option[Set[Source.File]],
                                 builder: Builder): Try[List[Result]] = {
 
     val (command, sourceDirs) = toolCommand(path, conf, builder)
@@ -98,13 +105,13 @@ object FindBugsSec extends Tool {
     Seq(directory.absoluteStringPath, bug.occurence.path).mkString(File.separator)
   }
 
-  private[this] def isFileEnabled(path: String, filesOpt: Option[Set[Path]]): Boolean = {
-    filesOpt.fold(true) { files => files.exists(_.toAbsolutePath.toFile.getAbsolutePath == path) }
+  private[this] def isFileEnabled(path: String, filesOpt: Option[Set[Source.File]]): Boolean = {
+    filesOpt.fold(true) { files => files.exists( file => Paths.get(file.path).toFile.getAbsolutePath == path) }
   }
 
   private[this] def resultsFromBugInstances(bugs: Seq[BugInstance],
                                             sourceDirs: Array[File],
-                                            files: Option[Set[Path]],
+                                            files: Option[Set[Source.File]],
                                             builder: Builder): Seq[Result] = {
     val sourceDirectories = sourceDirs.map { dir =>
       val components = Seq(dir.getAbsolutePath) ++ builder.pathComponents
@@ -118,13 +125,13 @@ object FindBugsSec extends Tool {
       val results: Seq[Result] = foundOriginDirectories.collect {
         case directory if foundOriginDirectories.length == 1 && isFileEnabled(sourceFileName(directory, bug), files) =>
           val filename = sourceFileName(directory, bug)
-          Issue(SourcePath(filename),
-            ResultMessage(bug.message),
-            PatternId(bug.name),
-            ResultLine(bug.occurence.lineno))
+          Issue(Source.File(filename),
+            Result.Message(bug.message),
+            Pattern.Id(bug.name),
+            Source.Line(bug.occurence.lineno))
         case directory if foundOriginDirectories.length > 1 && isFileEnabled(sourceFileName(directory, bug), files) =>
           val filename = sourceFileName(directory, bug)
-          FileError(SourcePath(filename),
+          Result.FileError(Source.File(filename),
             Option(ErrorMessage("File duplicated in multiple directories.")))
 
       }
@@ -157,7 +164,7 @@ object FindBugsSec extends Tool {
     }
   }
 
-  private[this] def patternIncludeXML(conf: List[PatternDef]): String = {
+  private[this] def patternIncludeXML(conf: List[Pattern.Definition]): String = {
     val xmlLiteral = <FindBugsFilter>
       {conf.map(pattern =>
         <Match>

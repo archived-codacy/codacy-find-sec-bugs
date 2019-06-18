@@ -3,9 +3,9 @@ package codacy.findbugssec
 import java.io.File
 import java.nio.file.Path
 
-import scala.util.{Success, Failure, Try}
+import com.codacy.tools.scala.seed.utils.CommandRunner
 
-import codacy.dockerApi.utils.CommandRunner
+import scala.util.{Failure, Success, Try}
 
 
 sealed trait Builder {
